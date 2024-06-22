@@ -1,0 +1,163 @@
+*************************************************************************
+Usage:
+	This demonstration shows how to use the IDDK 2000 library in a basic 
+	manner. This demonstration only works with the IriShield devices.
+
+	Copyright (C) 2014 by IriTech, Inc. All rights reserved.
+*************************************************************************
+Please press ENTER to continue ...
+
+
+
+Reset on open device: 
+	1. Yes (default)
+	2. No
+Enter your choice: 1
+1
+
+Scan devices ... 1 device(s) found !
+	1. IriShield M2120 #1
+
+Open device IriShield M2120 #1 ... done.
+
+MAIN MENU: Select one of the features below
+	1. Login
+	2. Logout
+	3. Device Management
+	4. Device & SDK Information
+	5. Capturing Process
+	6. Iris Recognition
+	7. Power Management
+	8. Recovery (IriShield USB only)
+	9. Exit
+Enter your choice: 5
+5
+
+
+*************** Capturing Process ***************
+
+
+Init Camera: 
+
+	Image width: 640
+	Image height: 480
+
+Parameters for capturing process
+Capture mode: 
+	1. IDDK_TIMEBASED (default) 
+	2. IDDK_FRAMEBASED
+Enter your choice: 1
+1
+
+Enter the duration since iris detected (from 1 to 600 seconds, enter for 3): 5
+5
+
+Quality mode: 
+	1. Normal (default)
+	2. High 
+	3. Very High
+Enter your choice: 2
+2
+
+Enable auto led? 
+	1. Yes (default)
+	2. No
+Enter your choice: 1
+1
+
+Put your eyes in front of the camera
+	Scanning for eyes.............................................................................................................................................................................................................................................................................................................
+	Oops! No eye detected for so long. The capture process aborted.
+
+Error: IDDK_SE_NO_FRAME_AVAILABLE
+
+
+
+***********************************************
+
+
+MAIN MENU: Select one of the features below
+	1. Login
+	2. Logout
+	3. Device Management
+	4. Device & SDK Information
+	5. Capturing Process
+	6. Iris Recognition
+	7. Power Management
+	8. Recovery (IriShield USB only)
+	9. Exit
+Enter your choice: 5
+5
+
+
+*************** Capturing Process ***************
+
+
+Init Camera: 
+
+	Image width: 640
+	Image height: 480
+
+Parameters for capturing process
+Capture mode: 
+	1. IDDK_TIMEBASED (default) 
+	2. IDDK_FRAMEBASED
+Enter your choice: 1
+1
+
+Enter the duration since iris detected (from 1 to 600 seconds, enter for 3): 5
+5
+
+Quality mode: 
+	1. Normal (default)
+	2. High 
+	3. Very High
+Enter your choice: 2
+2
+
+Enable auto led? 
+	1. Yes (default)
+	2. No
+Enter your choice: 1
+1
+
+Put your eyes in front of the camera
+	Scanning for eyes..................................................
+	Eyes are detected.
+Quality of the current captured image:
+	1. Total score: 73
+	2. Usable area: 85
+
+Do you want to get the result image? 
+	1. No (default)
+	2. Yes
+Enter your choice: 2
+2
+
+Select image kind: 
+	1. Original Image - K1 (default) 
+	2. VGA Image - K2 
+	3. Cropped Image - K3
+	4. Cropped and Masked Image - K7
+Enter your choice: 1
+1
+
+Select image format: 
+	1. Mono JP2 Image (default)
+	2. Mono Raw Image
+	3. IriTech JP2 Image
+	4. IriTech Raw Image
+Enter your choice: 1
+1
+
+Enter compress ratio (enter for default): 50
+50
+
+
+Get result image ...done
+		Saved ./UnknownEyeImage_1.jp2
+
+Do you want to get result ISO image: 
+	1. No (default)
+	2. Yes
+Enter your choice: 1
