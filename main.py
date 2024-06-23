@@ -1,9 +1,9 @@
 import pexpect
 import os
 
-
-
-
+def expect_and_send(sendValue):
+    child.expect("Enter your choice: ")
+    child.sendline(sendValue)
 
 
 
@@ -13,9 +13,7 @@ os.environ['DYLD_LIBRARY_PATH'] = '/opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source:
 # Path to the executable
 executable = '/opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source/Iddk2000Demo'
 
-
 loop=True
-
 while loop:
     # Start the process
     child = pexpect.spawn(executable)
@@ -29,8 +27,7 @@ while loop:
     # 	1. Yes (default)
     # 	2. No
 
-    child.expect("Enter your choice: ")
-    child.sendline("1")
+    expect_and_send("1")
 
     # MAIN MENU: Select one of the features below
     # 	1. Login
@@ -45,8 +42,7 @@ while loop:
     # Enter your choice:
 
 
-    child.expect("Enter your choice: ")
-    child.sendline("5")
+    expect_and_send("5")
 
 
     # Parameters for capturing process
@@ -56,8 +52,7 @@ while loop:
     # Enter your choice: 
 
 
-    child.expect("Enter your choice: ")
-    child.sendline("1")
+    expect_and_send("1")
 
 
     # Enter the duration since iris detected (from 1 to 600 seconds, enter for 3): 5
@@ -71,8 +66,7 @@ while loop:
     # 	3. Very High
     # Enter your choice:
 
-    child.expect("Enter your choice: ")
-    child.sendline("2")
+    expect_and_send("2")
 
     # Enable auto led? 
     # 	1. Yes (default)
@@ -80,14 +74,11 @@ while loop:
     # Enter your choice:
 
 
-    child.expect("Enter your choice: ")
-    child.sendline("1")
+    expect_and_send("1")
 
     child.expect("Put your eyes in front of the camera")
     print("""Put your eyes in front of the camera
         Scanning for eyes............................""")
-
-
 
     # Simulate waiting for the eye scanning process
     
@@ -95,7 +86,6 @@ while loop:
     while loop_to_capture:
 
         index=child.expect(["Error: IDDK_SE_NO_QUALIFIED_FRAME","Error: IDDK_SE_NO_FRAME_AVAILABLE","Do you want to get the result image?"])
-
         
         if index==0 or index==1:
 
@@ -111,10 +101,7 @@ while loop:
             # 	9. Exit
             # Enter your choice:
 
-
-            child.expect("Enter your choice: ")
-            child.sendline("5")
-
+            expect_and_send("5")
 
             # Parameters for capturing process
             # Capture mode: 
@@ -122,10 +109,7 @@ while loop:
             # 	2. IDDK_FRAMEBASED
             # Enter your choice: 
 
-
-            child.expect("Enter your choice: ")
-            child.sendline("1")
-
+            expect_and_send("1")
 
             # Enter the duration since iris detected (from 1 to 600 seconds, enter for 3): 5
 
@@ -138,8 +122,7 @@ while loop:
             # 	3. Very High
             # Enter your choice:
 
-            child.expect("Enter your choice: ")
-            child.sendline("2")
+            expect_and_send("2")
 
             # Enable auto led? 
             # 	1. Yes (default)
@@ -147,15 +130,9 @@ while loop:
             # Enter your choice:
 
 
-            child.expect("Enter your choice: ")
-            child.sendline("1")
-
-
-
-
+            expect_and_send("1")
 
             child.expect("Put your eyes in front of the camera")
-
 
             print("""Put your eyes in front of the camera
                 Scanning for eyes............................""")
@@ -166,14 +143,12 @@ while loop:
         elif index==2:
             loop_to_capture=False
 
-
     # Do you want to get the result image? 
     # 	1. No (default)
     # 	2. Yes
     # Enter your choice: 2
 
-    child.expect("Enter your choice: ")
-    child.sendline("2")
+    expect_and_send("2")
 
     # Select image kind: 
     # 	1. Original Image - K1 (default) 
@@ -182,9 +157,7 @@ while loop:
     # 	4. Cropped and Masked Image - K7
     # Enter your choice:
 
-    child.expect("Enter your choice: ")
-    child.sendline("1")
-
+    expect_and_send("1")
 
     # Select image format: 
     # 	1. Mono JP2 Image (default)
@@ -193,24 +166,19 @@ while loop:
     # 	4. IriTech Raw Image
     # Enter your choice: 1
 
-
-    child.expect("Enter your choice: ")
-    child.sendline("1")
+    expect_and_send("1")
 
     # Enter compress ratio (enter for default): 50
 
-
     child.expect("Enter compress .*: ")
     child.sendline("50")
-
 
     # Do you want to get result ISO image: 
     # 	1. No (default)
     # 	2. Yes
     # Enter your choice:
 
-    child.expect("Enter your choice: ")
-    child.sendline("1")
+    expect_and_send("1")
 
     # Close the log file
     child.logfile.close()
@@ -223,4 +191,3 @@ while loop:
         loop=True
     else:
         loop=False
-
