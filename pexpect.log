@@ -16,65 +16,9 @@ Enter your choice: 1
 1
 
 Scan devices ... 1 device(s) found !
-	1. IriShield M2120 #1
+	1. IriShield M2121 #1
 
-Open device IriShield M2120 #1 ... done.
-
-MAIN MENU: Select one of the features below
-	1. Login
-	2. Logout
-	3. Device Management
-	4. Device & SDK Information
-	5. Capturing Process
-	6. Iris Recognition
-	7. Power Management
-	8. Recovery (IriShield USB only)
-	9. Exit
-Enter your choice: 5
-5
-
-
-*************** Capturing Process ***************
-
-
-Init Camera: 
-
-	Image width: 640
-	Image height: 480
-
-Parameters for capturing process
-Capture mode: 
-	1. IDDK_TIMEBASED (default) 
-	2. IDDK_FRAMEBASED
-Enter your choice: 1
-1
-
-Enter the duration since iris detected (from 1 to 600 seconds, enter for 3): 5
-5
-
-Quality mode: 
-	1. Normal (default)
-	2. High 
-	3. Very High
-Enter your choice: 2
-2
-
-Enable auto led? 
-	1. Yes (default)
-	2. No
-Enter your choice: 1
-1
-
-Put your eyes in front of the camera
-	Scanning for eyes.............................................................................................................................................................................................................................................................................................................
-	Oops! No eye detected for so long. The capture process aborted.
-
-Error: IDDK_SE_NO_FRAME_AVAILABLE
-
-
-
-***********************************************
-
+Open device IriShield M2121 #1 ... done.
 
 MAIN MENU: Select one of the features below
 	1. Login
@@ -122,11 +66,11 @@ Enter your choice: 1
 1
 
 Put your eyes in front of the camera
-	Scanning for eyes..................................................
+	Scanning for eyes...................
 	Eyes are detected.
 Quality of the current captured image:
-	1. Total score: 73
-	2. Usable area: 85
+	1. Total score: 68
+	2. Usable area: 57
 
 Do you want to get the result image? 
 	1. No (default)
