@@ -1,9 +1,71 @@
 import pexpect
+import csv
 import os
+
+
+from skimage.metrics import structural_similarity as ssim
+import argparse
+import imutils
+import cv2
+
+
+
+
+
+
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#               Extract the name of the image from csv file and put it in a list
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# ******************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+nameList=[]
+with open('/Users/czajkademo1/Desktop/pyDemo/img_name.csv',newline='') as csvfile:
+    eachName=csv.reader(csvfile,delimiter=' ',quotechar='|')
+     
+    for row in eachName:
+        row=row[0]
+        row=row.split(',')
+
+        eachline=row[0]
+
+        # if '.tiff' in eachline:
+        #     eachline=eachline.replace(".tiff",'')
+        # elif '.bmp' in eachline:
+        #     eachline=eachline.replace('.bmp','')
+        
+        nameList.append(eachline)
+
+
+
+
+
+
+
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# ******************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+
 
 def expect_and_send(sendValue):
     child.expect("Enter your choice: ")
     child.sendline(sendValue)
+
+
+
+
+
+
+
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#               Main process
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# ******************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
@@ -14,6 +76,7 @@ os.environ['DYLD_LIBRARY_PATH'] = '/opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source:
 executable = '/opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source/Iddk2000Demo'
 
 loop=True
+counter=1
 while loop:
     # Start the process
     child = pexpect.spawn(executable)
@@ -66,7 +129,7 @@ while loop:
     # 	3. Very High
     # Enter your choice:
 
-    expect_and_send("2")
+    expect_and_send("3")
 
     # Enable auto led? 
     # 	1. Yes (default)
@@ -180,11 +243,43 @@ while loop:
 
     expect_and_send("1")
 
+
     # Close the log file
     child.logfile.close()
 
-    child=pexpect.spawn("mv /opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source/UnknownEyeImage_1.jp2 /Users/czajkademo1/Desktop/pyDemo/LeftEye.jp2")
-    print("Process completed.")
+
+
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#               checks the similarity between captured and original
+# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+    captured_image_path = "/opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source/UnknownEyeImage_1.jp2"
+    original_image = f"/Users/czajkademo1/Desktop/pyDemo/check_similarity/CrossImages/{nameList[counter]}"
+
+    imageA = cv2.imread(captured_image_path)	
+    
+    imageB = cv2.imread(original_image)
+	 
+	# convert the images to grayscale
+    grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
+    grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)# compute the Structural Similarity Index (SSIM) between the two
+	# images, ensuring that the difference image is returned
+    (score, diff) = ssim(grayA, grayB, full=True)
+    diff = (diff * 255).astype("uint8")
+    print(score)
+
+
+
+
+
+    if score<0.9:
+        child=pexpect.spawn(f"mv /opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source/UnknownEyeImage_1.jp2 /Users/czajkademo1/Desktop/pyDemo/saved_images/{nameList[counter]}.jp2")
+        print("Process completed.")
+    
+    nameList.pop(counter)
+    counter+=1
+
 
     do_continue=input("Enter q to quit; anything else to continue: ")
     if do_continue.lower()!="q":
