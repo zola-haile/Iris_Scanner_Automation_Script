@@ -9,6 +9,17 @@ import imutils
 import cv2
 
 
+from nameReader import nameList 
+
+from nameReader2 import nameList2
+
+
+imgName=nameList
+
+nameList=nameList2
+
+
+
 
 
 
@@ -19,28 +30,6 @@ import cv2
 # *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # ******************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-nameList=[]
-with open('/Users/czajkademo1/Desktop/pyDemo/img_name.csv',newline='') as csvfile:
-    eachName=csv.reader(csvfile,delimiter=' ',quotechar='|')
-     
-    for row in eachName:
-        row=row[0]
-        row=row.split(',')
-
-        eachline=row[0]
-
-        # if '.tiff' in eachline:
-        #     eachline=eachline.replace(".tiff",'')
-        # elif '.bmp' in eachline:
-        #     eachline=eachline.replace('.bmp','')
-        
-        nameList.append(eachline)
-
-
-
-
-
-
 
 # *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -48,17 +37,9 @@ with open('/Users/czajkademo1/Desktop/pyDemo/img_name.csv',newline='') as csvfil
 # ******************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-
-
-
 def expect_and_send(sendValue):
     child.expect("Enter your choice: ")
     child.sendline(sendValue)
-
-
-
-
-
 
 
 # *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -76,8 +57,12 @@ os.environ['DYLD_LIBRARY_PATH'] = '/opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source:
 executable = '/opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source/Iddk2000Demo'
 
 loop=True
-counter=1
+
+
+list_of_unscanned_iris=[]
+number_imgs_taken=0
 while loop:
+
     # Start the process
     child = pexpect.spawn(executable)
     child.logfile = open('pexpect.log', 'wb')
@@ -146,6 +131,9 @@ while loop:
     # Simulate waiting for the eye scanning process
     
     loop_to_capture=True
+    count=0
+
+
     while loop_to_capture:
 
         index=child.expect(["Error: IDDK_SE_NO_QUALIFIED_FRAME","Error: IDDK_SE_NO_FRAME_AVAILABLE","Do you want to get the result image?"])
@@ -200,89 +188,142 @@ while loop:
             print("""Put your eyes in front of the camera
                 Scanning for eyes............................""")
 
+            
             loop_to_capture=True
+            count+=1
+            if count==5:
+                # MAIN MENU: Select one of the features below
+            # 	1. Login
+            # 	2. Logout
+            # 	3. Device Management
+            # 	4. Device & SDK Information
+            # 	5. Capturing Process
+            # 	6. Iris Recognition
+            # 	7. Power Management
+            # 	8. Recovery (IriShield USB only)
+            # 	9. Exit
+            # Enter your choice:
+
+                expect_and_send("9")
+
+                list_of_unscanned_iris.append(imgName[0])
+                print("****  This iris could not be scanned, so it is skiped ***")
+                break
+
+
             continue
 
         elif index==2:
             loop_to_capture=False
 
+
+
     # Do you want to get the result image? 
     # 	1. No (default)
     # 	2. Yes
     # Enter your choice: 2
+    if index==2:
+        expect_and_send("2")
 
-    expect_and_send("2")
+        # Select image kind: 
+        # 	1. Original Image - K1 (default) 
+        # 	2. VGA Image - K2 
+        # 	3. Cropped Image - K3
+        # 	4. Cropped and Masked Image - K7
+        # Enter your choice:
 
-    # Select image kind: 
-    # 	1. Original Image - K1 (default) 
-    # 	2. VGA Image - K2 
-    # 	3. Cropped Image - K3
-    # 	4. Cropped and Masked Image - K7
-    # Enter your choice:
+        expect_and_send("1")
 
-    expect_and_send("1")
+        # Select image format: 
+        # 	1. Mono JP2 Image (default)
+        # 	2. Mono Raw Image
+        # 	3. IriTech JP2 Image
+        # 	4. IriTech Raw Image
+        # Enter your choice: 1
 
-    # Select image format: 
-    # 	1. Mono JP2 Image (default)
-    # 	2. Mono Raw Image
-    # 	3. IriTech JP2 Image
-    # 	4. IriTech Raw Image
-    # Enter your choice: 1
+        expect_and_send("1")
 
-    expect_and_send("1")
+        # Enter compress ratio (enter for default): 50
 
-    # Enter compress ratio (enter for default): 50
+        child.expect("Enter compress .*: ")
+        child.sendline("50")
 
-    child.expect("Enter compress .*: ")
-    child.sendline("50")
+        # Do you want to get result ISO image: 
+        # 	1. No (default)
+        # 	2. Yes
+        # Enter your choice:
 
-    # Do you want to get result ISO image: 
-    # 	1. No (default)
-    # 	2. Yes
-    # Enter your choice:
-
-    expect_and_send("1")
-
-
-    # Close the log file
-    child.logfile.close()
+        expect_and_send("1")
 
 
-
-# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-#               checks the similarity between captured and original
-# *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        # Close the log file
+        child.logfile.close()
 
 
-    captured_image_path = "/opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source/UnknownEyeImage_1.jp2"
-    original_image = f"/Users/czajkademo1/Desktop/pyDemo/check_similarity/CrossImages/{nameList[counter]}"
 
-    imageA = cv2.imread(captured_image_path)	
+    # *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    #               checks the similarity between captured and original
+    # *****************#########$$$$$$$$$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+        captured_image_path = "/opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source/UnknownEyeImage_1.jp2"
+        original_image = f"/Users/czajkademo1/Desktop/pyDemo/check_similarity/CrossImages/{nameList[0]}"
+
+        imageA = cv2.imread(captured_image_path)	
+        
+        imageB = cv2.imread(original_image)
+        
+        # convert the images to grayscale
+        grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
+        grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)# compute the Structural Similarity Index (SSIM) between the two
+        # images, ensuring that the difference image is returned
+        (score, diff) = ssim(grayA, grayB, full=True)
+        print(score)
+        diff = (diff * 255).astype("uint8")
+        
+
+        if score<0.9:
+            child=pexpect.spawn(f"mv /opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source/UnknownEyeImage_1.jp2 /Users/czajkademo1/Desktop/pyDemo/saved_images/{imgName[0]}.jp2")
+            print("Process completed.")
+
+
+
+
+
+    imgName.pop(0)
+    nameList.pop(0)
     
-    imageB = cv2.imread(original_image)
-	 
-	# convert the images to grayscale
-    grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
-    grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)# compute the Structural Similarity Index (SSIM) between the two
-	# images, ensuring that the difference image is returned
-    (score, diff) = ssim(grayA, grayB, full=True)
-    diff = (diff * 255).astype("uint8")
-    print(score)
-
-
-
-
-
-    if score<0.9:
-        child=pexpect.spawn(f"mv /opt/IriTech/IDDK-2000-3.3.1-OSX/demo/source/UnknownEyeImage_1.jp2 /Users/czajkademo1/Desktop/pyDemo/saved_images/{nameList[counter]}.jp2")
-        print("Process completed.")
     
-    nameList.pop(counter)
-    counter+=1
-
-
+    number_imgs_taken+=1
+    print(f"Number of images scanned so far {number_imgs_taken}.")
     do_continue=input("Enter q to quit; anything else to continue: ")
     if do_continue.lower()!="q":
         loop=True
     else:
         loop=False
+
+
+
+fileName_imgName_comparison="imgName_comparison.csv"
+fileName_imgName_naming="imgName_naming.csv"
+fileName_unscanned_imgName="unscanned_imgName.csv"
+
+with open(fileName_imgName_comparison,'w', newline='') as csvfile:
+    csvwriter=csv.writer(csvfile)
+
+    for item in nameList:
+        csvwriter.writerow([item])
+
+
+with open(fileName_imgName_naming,'w', newline='') as csvfile:
+    csvwriter=csv.writer(csvfile)
+
+    for item in imgName:
+        csvwriter.writerow([item])
+
+with open(fileName_unscanned_imgName,'w', newline='') as csvfile:
+    csvwriter=csv.writer(csvfile)
+
+    for item in list_of_unscanned_iris:
+        csvwriter.writerow([item])
+
